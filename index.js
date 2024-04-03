@@ -1,12 +1,10 @@
 // require('./db');
-// const connectToMongo = require('./db')
+const connectToMongo = require('./db')
 const express = require('express')
-const dotenv = require("dotenv");
-dotenv.config();
-require("./db");
+
 var cors = require('cors') 
 
-// connectToMongo()
+connectToMongo()
 
 const app = express()
 const port = 5000
