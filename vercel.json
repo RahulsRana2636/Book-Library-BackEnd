@@ -6,10 +6,9 @@
             "use": "@vercel/node"
         }
     ],
-    "routes": [
-        {
-            "src": "/(.*)",
-            "dest": "index.js"
-        }
-    ]
+    "routes":[
+        { "src": "/user/createuser", "dest": "index.js" },
+        { "src": "/(.*)", "dest": "index.js" }
+      ]
+    
 }
