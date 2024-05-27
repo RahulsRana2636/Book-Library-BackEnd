@@ -102,7 +102,7 @@ router.put("/removebook/:id", fetchuser, async (req, res) => {
   }
 });
 
-// ROUTE 6: fetch requested book for  Submit : GET "http://localhost:5000/getbook/submitbooks". Login required
+// ROUTE 6: fetch requested book for  Submit : GET "http://localhost:5000/getbook/submitbooks". Login require
 router.get("/submitbooks", fetchuser, async (req, res) => {
     try {
         const reqbooklist = await GetBook.find({ status: { $in: [2, -1] } });
