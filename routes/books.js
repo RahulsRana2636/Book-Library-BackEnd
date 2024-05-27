@@ -5,7 +5,7 @@ const { body, validationResult } = require('express-validator');
 var fetchuser = require('../middleware/fetchUser');
 
 // ROUTE 1: Get All the books using: GET "http://localhost:5000/books/booklist". Login required
-router.get("/booklist", async (req, res) => {
+router.get("/booklist",fetchuser, async (req, res) => {
     try{
     const booklist = await Book.find({status: 1});
     if (booklist.length > 0) {
@@ -22,7 +22,7 @@ router.get("/booklist", async (req, res) => {
 
 // ROUTE 2: Add a new book using: POST "http://localhost:5000/books/addbook". Login required
 
-router.post('/addbook',  [
+router.post('/addbook', fetchuser, [
     body('bookname', 'Enter a valid bookname').isLength({ min: 3 }),
     body('author', 'Enter a valid book author name').isLength({ min: 4 }),], async (req, res) => {
         try {
@@ -43,7 +43,7 @@ router.post('/addbook',  [
     })
 
 // ROUTE 3: Search a book using: GET "http://localhost:5000/books/book/:id". Login required
-    router.get("/book/:id", async (req, resp) => {
+    router.get("/book/:id", fetchuser, async (req, resp) => {
         let result = await Book.findOne({ _id: req.params.id })
         if (result) {
             resp.send(result)
@@ -53,7 +53,7 @@ router.post('/addbook',  [
     })
 
     // ROUTE 4: Update an existing book using: PUT "http://localhost:5000/books/updatebook/:id". Login required
-router.put('/updatebook/:id', async (req, res) => {
+router.put('/updatebook/:id', fetchuser, async (req, res) => {
     const { bookname, author } = req.body;
     try {
         // Create a newNote object
@@ -77,7 +77,7 @@ router.put('/updatebook/:id', async (req, res) => {
     }
 })
 // ROUTE 5: Delete an existing Book using: DELETE "http://localhost:5000/books//deletebook/:id". Login required
-router.delete('/deletebook/:id',  async (req, res) => {
+router.delete('/deletebook/:id', fetchuser, async (req, res) => {
     try {
         // Find the note to be delete and delete it
         let book = await Book.findById(req.params.id);

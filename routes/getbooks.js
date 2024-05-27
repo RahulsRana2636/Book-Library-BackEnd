@@ -1,15 +1,13 @@
 const express = require("express");
 const router = express.Router();
-const getBook = require("../Schemas/getBook");
 var fetchuser = require("../middleware/fetchUser");
 const GetBook = require("../Schemas/getBook");
-const { compareSync } = require("bcryptjs");
 const Book = require('../Schemas/book');
 
 // ROUTE 1: Get All the get books for user using: GET "http://localhost:5000/getbook/getbooklist/:userId". Login required
-router.get("/getbooklist/:userId", async (req, res) => {
+router.get("/getbooklist/:userId", fetchuser, async (req, res) => {
   try {
-    const booklist = await getBook.find({ status: 1, user: req.params.userId });
+    const booklist = await GetBook.find({ status: 1, user: req.params.userId });
     if (booklist.length > 0) {
       res.send(booklist);
     } else {
@@ -21,7 +19,7 @@ router.get("/getbooklist/:userId", async (req, res) => {
   }
 });
 // ROUTE 2: Get All the getbooks where (status 0 and 1) using: GET "http://localhost:5000/getbook/getbooklists". Login required
-router.get("/getbooklists", async (req, res) => {
+router.get("/getbooklists", fetchuser, async (req, res) => {
   try {
     let status = req.query.status;
     let query = {};
@@ -30,7 +28,7 @@ router.get("/getbooklists", async (req, res) => {
     } else {
       res.send({ result: "No Book found" });
     }
-    const booklist = await getBook.find(query);
+    const booklist = await GetBook.find(query);
     if (booklist.length > 0) {
       res.send(booklist);
     } else {
@@ -44,7 +42,7 @@ router.get("/getbooklists", async (req, res) => {
 
 // ROUTE 3: get a new book using: POST "http://localhost:5000/getbook/addgetbook". Login required
 
-router.post("/addgetbook", async (req, res) => {
+router.post("/addgetbook",fetchuser, async (req, res) => {
   try {
     const book = new GetBook(req.body);
     const savedBook = await book.save();
@@ -67,7 +65,7 @@ router.get("/searchgetbook/:id", async (req, resp) => {
 });
 
 // ROUTE 4: Approve/submit an existing book using: PUT "http://localhost:5000/getbook/approvegetbook/:id". Login required
-router.put("/approvegetbook/:id", async (req, res) => {
+router.put("/approvegetbook/:id", fetchuser, async (req, res) => {
   const { status } = req.body;
   try {
     const approveBook = {};
@@ -77,9 +75,6 @@ router.put("/approvegetbook/:id", async (req, res) => {
       return res.status(404).send("Not Found");
     }
 
-    // if (book.user.toString() !== req.user.id) {
-    //     return res.status(401).send("Not Allowed");
-    // }
     getbook = await GetBook.findByIdAndUpdate( req.params.id, { $set: approveBook }, { new: true } );
     res.json({ getbook });
   } catch (error) {
@@ -89,7 +84,7 @@ router.put("/approvegetbook/:id", async (req, res) => {
 });
 
 // ROUTE 5: Remove an existing book  from booklist using: PUT "http://localhost:5000/getbook/removebook/:id". Login required
-router.put("/removebook/:id", async (req, res) => {
+router.put("/removebook/:id", fetchuser, async (req, res) => {
   const { status } = req.body;
   try {
     const removeBook = {};
@@ -99,9 +94,6 @@ router.put("/removebook/:id", async (req, res) => {
       return res.status(404).send("Not Found");
     }
 
-    // if (book.user.toString() !== req.user.id) {
-    //     return res.status(401).send("Not Allowed");
-    // }
     book = await Book.findByIdAndUpdate( req.params.id, { $set: removeBook }, { new: true } );
     res.json({ book });
   } catch (error) {
@@ -111,9 +103,9 @@ router.put("/removebook/:id", async (req, res) => {
 });
 
 // ROUTE 6: fetch requested book for  Submit : GET "http://localhost:5000/getbook/submitbooks". Login required
-router.get("/submitbooks", async (req, res) => {
+router.get("/submitbooks", fetchuser, async (req, res) => {
     try {
-        const reqbooklist = await getBook.find({ status: { $in: [2, -1] } });
+        const reqbooklist = await GetBook.find({ status: { $in: [2, -1] } });
       if (reqbooklist.length > 0) {
         res.send(reqbooklist);
       } else {
@@ -126,9 +118,9 @@ router.get("/submitbooks", async (req, res) => {
   });
 
   // ROUTE 7: fetch  All the submit books for user using: GET "http://localhost:5000/getbook/submitbooklist/:userId". Login required
-router.get("/submitbooklist/:userId", async (req, res) => {
+router.get("/submitbooklist/:userId", fetchuser, async (req, res) => {
     try {
-      const booklist = await getBook.find({ status: -1, user: req.params.userId });
+      const booklist = await GetBook.find({ status: -1, user: req.params.userId });
       if (booklist.length > 0) {
         res.send(booklist);
       } else {
